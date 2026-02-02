@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>X search</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body style="text-align:center; margin-top:100px; font-family:Arial;">
+
+<h2>X Search Engine 🔍</h2>
+
+<input type="text" id="q" placeholder="Yahan search likho"
+style="width:80%; padding:10px; font-size:18px;">
+
+<br><br>
+
+<button onclick="go()"
+style="padding:10px 20px; font-size:18px;">
+Search
+</button>
+
+<script>
+function go() {
+  var text = document.getElementById("q").value;
+  if(text != "") {
+    window.location =
+      "https://www.google.com/search?q=" + text;
+  }
+}
+</script>
+
+</body>
+</html>
