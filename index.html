@@ -3,139 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Multi-App</title>
+    <title>Smart App Pro</title>
     <style>
         :root {
             --primary: #6c5ce7;
-            --bg: #f4f7f6;
-            --text: #333;
+            --bg: #f8f9fa;
             --card: #ffffff;
+            --text: #2d3436;
         }
 
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); transition: 0.3s; }
-
-        /* Sidebar Navigation */
-        .sidebar { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
-        .nav-item { cursor: pointer; text-align: center; font-size: 12px; color: #777; transition: 0.3s; }
-        .nav-item.active { color: var(--primary); font-weight: bold; }
-        .nav-item i { display: block; font-size: 20px; margin-bottom: 2px; }
-
-        /* Main Content Areas */
-        .container { padding: 20px; margin-bottom: 70px; }
-        .page { display: none; animation: fadeIn 0.4s ease; }
-        .page.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Search Bar UI */
-        .search-box { background: var(--card); padding: 15px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; }
-        button { width: 100%; padding: 12px; margin-top: 10px; border: none; border-radius: 8px; background: var(--primary); color: white; cursor: pointer; }
-
-        /* Card Style */
-        .card { background: var(--card); padding: 20px; border-radius: 15px; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         
-        /* Color Dots */
-        .dot { height: 30px; width: 30px; border-radius: 50%; display: inline-block; margin-right: 10px; cursor: pointer; border: 2px solid #ddd; }
-    </style>
-</head>
-<body>
+        /* Navigation */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 12px 0; box-shadow: 0 -2px 15px rgba(0,0,0,0.1); z-index: 100; }
+        .nav-item { cursor: pointer; font-size: 14px; color: #a29bfe; transition: 0.3s; text-align: center; }
+        .nav-item.active { color: var(--primary); font-weight: bold; transform: scale(1.1); }
 
-    <div class="container">
-        <div id="homePage" class="page active">
-            <h1>🏠 Welcome</h1>
-            <div class="card">
-                <p>Hello! Ye aapki app ka home screen hai.</p>
-                <button onclick="showPage('searchPage')">Search Start Karein</button>
-            </div>
-        </div>
+        /* Container */
+        .app-container { padding: 20px; padding-bottom: 80px; max-width: 500px; margin: auto; }
+        .section { display: none; animation: slideUp 0.4s ease; }
+        .section.active { display: block; }
 
-        <div id="searchPage" class="page">
-            <h1>🔍 Search</h1>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search keywords...">
-                <button onclick="runSearch()">Dhoondein</button>
-            </div>
-            <div id="searchResults" style="margin-top: 20px;"></div>
-        </div>
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        <div id="loginPage" class="page">
-            <h1>👤 Login</h1>
-            <div class="card">
-                <input type="email" placeholder="Email Address" style="margin-bottom: 10px;">
-                <input type="password" placeholder="Password">
-                <button onclick="alert('Login Successful!')">Sign In</button>
-                <p style="text-align: center; font-size: 13px;">Naya account banayein? <a href="#">Sign Up</a></p>
-            </div>
-        </div>
-
-        <div id="settingsPage" class="page">
-            <h1>⚙️ Settings</h1>
-            <div class="card">
-                <h3>App Theme</h3>
-                <div class="dot" style="background: #6c5ce7;" onclick="setTheme('#6c5ce7')"></div>
-                <div class="dot" style="background: #e74c3c;" onclick="setTheme('#e74c3c')"></div>
-                <div class="dot" style="background: #2ecc71;" onclick="setTheme('#2ecc71')"></div>
-                <div class="dot" style="background: #2d3436;" onclick="setTheme('#2d3436')"></div>
-                <hr>
-                <p>Version 1.0.2</p>
-                <button style="background: #999;" onclick="location.reload()">Reset App</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="sidebar">
-        <div class="nav-item active" onclick="showPage('homePage', this)"><i>🏠</i>Home</div>
-        <div class="nav-item" onclick="showPage('searchPage', this)"><i>🔍</i>Search</div>
-        <div class="nav-item" onclick="showPage('loginPage', this)"><i>👤</i>Login</div>
-        <div class="nav-item" onclick="showPage('settingsPage', this)"><i>⚙️</i>Settings</div>
-    </div>
-
-    <script>
-        // Page Switching Logic
-        function showPage(pageId, element) {
-            // Saare pages hide karo
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            // Selected page dikhao
-            document.getElementById(pageId).classList.add('active');
-            
-            // Nav icons ka color update karo
-            if(element) {
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                element.classList.add('active');
-            }
-        }
-
-        // Theme Change Logic
-        function setTheme(color) {
-            document.documentElement.style.setProperty('--primary', color);
-        }
-
-        // Search Logic
-        function runSearch() {
-            let q = document.getElementById('searchInput').value.toLowerCase();
-            let res = document.getElementById('searchResults');
-            res.innerHTML = "";
-            
-            if(!q) return alert("Kuch likhiye!");
-
-            // Fake Database
-            const data = [
-                {t: "How to use App", d: "Settings mein ja kar theme badlein."},
-                {t: "Profile Help", d: "Login page par ja kar sign in karein."},
-                {t: "Search Engine", d: "Ye search engine local data dhoondta hai."}
-            ];
-
-            let results = data.filter(i => i.t.toLowerCase().includes(q));
-            
-            if(results.length > 0) {
-                results.forEach(r => {
-                    res.innerHTML += `<div class="card"><b>${r.t}</b><br><small>${r.d}</small></div>`;
-                });
-            } else {
-                res.innerHTML = "<p>Nahi mila! <a href='https://google.com/search?q="+q+"'>Google par dekhein?</a></p>";
-            }
-        }
-    </script>
-</body>
-</html>
+        /* UI Elements */
+        .card { background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); }
+        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        
+        /* History & Data Styles */
+        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .del-btn { color: #ff7675; cursor: pointer; font-weight: bold; font-size: 12px; }
+        .theme-dot { height: 35px; width: 35px; border-radius: 50%; display: inline-block; margin: 5px; cursor: pointer; border: 3px solid white; box-shadow:
