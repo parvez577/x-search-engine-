@@ -1,38 +1,251 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart App Pro</title>
-    <style>
-        :root {
-            --primary: #6c5ce7;
-            --bg: #f8f9fa;
-            --card: #ffffff;
-            --text: #2d3436;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom Search Engine App</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --primary-color: #4CAF50;
+    --secondary-color: #f1f1f1;
+    --text-color: #333;
+}
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+header h1 { margin: 0; font-size: 1.5em; }
+header button { padding: 5px 10px; border:none; border-radius:5px; cursor:pointer; }
 
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); transition: 0.3s; }
-        
-        /* Navigation */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 12px 0; box-shadow: 0 -2px 15px rgba(0,0,0,0.1); z-index: 100; }
-        .nav-item { cursor: pointer; font-size: 14px; color: #a29bfe; transition: 0.3s; text-align: center; }
-        .nav-item.active { color: var(--primary); font-weight: bold; transform: scale(1.1); }
+nav {
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+nav button { background:none; border:none; cursor:pointer; font-weight:bold; }
 
-        /* Container */
-        .app-container { padding: 20px; padding-bottom: 80px; max-width: 500px; margin: auto; }
-        .section { display: none; animation: slideUp 0.4s ease; }
-        .section.active { display: block; }
+.container { padding: 20px; }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    border-radius:5px;
+    border:1px solid #ccc;
+    margin-right:5px;
+}
 
-        /* UI Elements */
-        .card { background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--primary); }
-        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        
-        /* History & Data Styles */
-        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; font-size: 14px; }
-        .del-btn { color: #ff7675; cursor: pointer; font-weight: bold; font-size: 12px; }
-        .theme-dot { height: 35px; width: 35px; border-radius: 50%; display: inline-block; margin: 5px; cursor: pointer; border: 3px solid white; box-shadow:
+.button { padding:10px 15px; border:none; border-radius:5px; background-color: var(--primary-color); color:white; cursor:pointer; }
+
+.settings, .profile, .history { background:white; padding:20px; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.2); margin-top:20px; }
+
+.theme-color { display:flex; gap:10px; margin-top:10px; }
+.theme-color div { width:30px; height:30px; border-radius:50%; cursor:pointer; border:2px solid #fff; }
+
+.history-item { display:flex; justify-content:space-between; margin:5px 0; padding:5px; background:#f9f9f9; border-radius:5px; }
+.history-item button { background:red; color:white; border:none; border-radius:3px; cursor:pointer; }
+
+.toggle-switch { display:flex; align-items:center; gap:5px; margin-top:10px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>My Search Engine</h1>
+    <button id="loginBtn">Login</button>
+</header>
+
+<nav>
+    <button id="searchTab">Search</button>
+    <button id="historyTab">History</button>
+    <button id="settingsTab">Settings</button>
+    <button id="profileTab">Profile</button>
+</nav>
+
+<div class="container">
+    <!-- Search Tab -->
+    <div id="searchSection">
+        <input type="text" id="searchInput" placeholder="Type your query...">
+        <button class="button" id="searchBtn">Search</button>
+    </div>
+
+    <!-- History Tab -->
+    <div id="historySection" style="display:none;" class="history">
+        <h2>Search History</h2>
+        <div id="historyList"></div>
+        <button class="button" id="clearHistory">Clear All History</button>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="settingsSection" style="display:none;" class="settings">
+        <h2>Settings</h2>
+        <label>Choose Theme Color:</label>
+        <div class="theme-color">
+            <div style="background-color: #4CAF50;" data-color="#4CAF50"></div>
+            <div style="background-color: #2196F3;" data-color="#2196F3"></div>
+            <div style="background-color: #FF5722;" data-color="#FF5722"></div>
+            <div style="background-color: #9C27B0;" data-color="#9C27B0"></div>
+        </div>
+        <div class="toggle-switch">
+            <input type="checkbox" id="darkModeToggle">
+            <label for="darkModeToggle">Dark Mode</label>
+        </div>
+    </div>
+
+    <!-- Profile Tab -->
+    <div id="profileSection" style="display:none;" class="profile">
+        <h2>Your Profile</h2>
+        <p><strong>Logged in as:</strong> <span id="userEmail">Not logged in</span></p>
+        <button class="button" id="changeLoginBtn">Change Gmail</button>
+    </div>
+</div>
+
+<script>
+// --- Tabs Functionality ---
+const searchTab = document.getElementById('searchTab');
+const historyTab = document.getElementById('historyTab');
+const settingsTab = document.getElementById('settingsTab');
+const profileTab = document.getElementById('profileTab');
+
+const searchSection = document.getElementById('searchSection');
+const historySection = document.getElementById('historySection');
+const settingsSection = document.getElementById('settingsSection');
+const profileSection = document.getElementById('profileSection');
+
+function showTab(tab) {
+    searchSection.style.display = 'none';
+    historySection.style.display = 'none';
+    settingsSection.style.display = 'none';
+    profileSection.style.display = 'none';
+    tab.style.display = 'block';
+}
+
+searchTab.addEventListener('click',()=>showTab(searchSection));
+historyTab.addEventListener('click',()=>showTab(historySection));
+settingsTab.addEventListener('click',()=>showTab(settingsSection));
+profileTab.addEventListener('click',()=>showTab(profileSection));
+
+// --- Login Functionality ---
+const loginBtn = document.getElementById('loginBtn');
+const changeLoginBtn = document.getElementById('changeLoginBtn');
+const userEmailDisplay = document.getElementById('userEmail');
+
+function loginUser() {
+    const email = prompt("Enter your Gmail ID:");
+    if(email) {
+        localStorage.setItem('userEmail', email);
+        userEmailDisplay.textContent = email;
+        loginBtn.textContent = "Logout";
+    }
+}
+
+function logoutUser() {
+    localStorage.removeItem('userEmail');
+    userEmailDisplay.textContent = "Not logged in";
+    loginBtn.textContent = "Login";
+}
+
+function toggleLogin() {
+    const email = localStorage.getItem('userEmail');
+    if(email) {
+        logoutUser();
+    } else {
+        loginUser();
+    }
+}
+
+loginBtn.addEventListener('click', toggleLogin);
+changeLoginBtn.addEventListener('click', loginUser);
+
+// --- Load saved login ---
+const savedEmail = localStorage.getItem('userEmail');
+if(savedEmail){
+    userEmailDisplay.textContent = savedEmail;
+    loginBtn.textContent = "Logout";
+}
+
+// --- Search Functionality ---
+const searchBtn = document.getElementById('searchBtn');
+const searchInput = document.getElementById('searchInput');
+
+searchBtn.addEventListener('click', ()=>{
+    const query = searchInput.value.trim();
+    if(query){
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+        addToHistory(query);
+        searchInput.value = '';
+    }
+});
+
+// --- History Functionality ---
+const historyList = document.getElementById('historyList');
+function loadHistory() {
+    const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+    historyList.innerHTML = '';
+    history.forEach((item,index)=>{
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerHTML = `<span>${item}</span> <button onclick="deleteHistory(${index})">Delete</button>`;
+        historyList.appendChild(div);
+    });
+}
+
+function addToHistory(query){
+    let history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+    history.unshift(query);
+    localStorage.setItem('searchHistory', JSON.stringify(history));
+    loadHistory();
+}
+
+function deleteHistory(index){
+    let history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+    history.splice(index,1);
+    localStorage.setItem('searchHistory', JSON.stringify(history));
+    loadHistory();
+}
+
+document.getElementById('clearHistory').addEventListener('click', ()=>{
+    localStorage.removeItem('searchHistory');
+    loadHistory();
+});
+
+// Load history on page load
+loadHistory();
+
+// --- Theme Functionality ---
+const themeColors = document.querySelectorAll('.theme-color div');
+themeColors.forEach(div=>{
+    div.addEventListener('click', ()=>{
+        document.documentElement.style.setProperty('--primary-color', div.getAttribute('data-color'));
+    });
+});
+
+// --- Dark Mode Toggle ---
+const darkModeToggle = document.getElementById('darkModeToggle');
+darkModeToggle.addEventListener('change', ()=>{
+    if(darkModeToggle.checked){
+        document.body.style.backgroundColor = '#121212';
+        document.body.style.color = '#eee';
+    } else {
+        document.body.style.backgroundColor = 'var(--secondary-color)';
+        document.body.style.color = 'var(--text-color)';
+    }
+});
+</script>
+
+</body>
+    </html>
