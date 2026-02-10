@@ -1,54 +1,90 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Custom Search Engine App</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<title>Mini Shooting Game</title>
 <style>
-:root {
-    --primary-color: #4CAF50;
-    --secondary-color: #f1f1f1;
-    --text-color: #333;
-}
-body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: var(--secondary-color);
-    color: var(--text-color);
-}
-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 15px;
-    text-align: center;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-header h1 { margin: 0; font-size: 1.5em; }
-header button { padding: 5px 10px; border:none; border-radius:5px; cursor:pointer; }
+  body { margin: 0; overflow: hidden; background: #222; color: #fff; font-family: Arial; }
+  canvas { display: block; margin: 0 auto; background: #333; border: 2px solid #fff; }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
 
-nav {
-    background: white;
-    display: flex;
-    justify-content: space-around;
-    padding: 10px 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-nav button { background:none; border:none; cursor:pointer; font-weight:bold; }
+<script src="game.js"></script>
+</body>
+</html>const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
-.container { padding: 20px; }
+let player = { x: 400, y: 500, width: 40, height: 40, speed: 5 };
+let bullets = [];
+let enemies = [];
 
-input[type="text"] {
-    width: 80%;
-    padding: 10px;
-    border-radius:5px;
-    border:1px solid #ccc;
-    margin-right:5px;
+function spawnEnemy() {
+  let x = Math.random() * (canvas.width - 40);
+  enemies.push({ x: x, y: -40, width: 40, height: 40, speed: 2 });
 }
 
-.button { padding:10px 15px; border:none; border-radius:5px; background-color: var(--primary-color); color:white; cursor:pointer; }
+document.addEventListener('keydown', function(e){
+  if(e.key === "ArrowLeft") player.x -= player.speed;
+  if(e.key === "ArrowRight") player.x += player.speed;
+  if(e.key === " ") shoot();
+});
 
-.settings, .profile, .history { 
+function shoot(){
+  bullets.push({ x: player.x + player.width/2 - 5, y: player.y, width: 10, height: 20, speed: 7 });
+}
+
+function update(){
+  // Player boundaries
+  if(player.x < 0) player.x = 0;
+  if(player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+  // Update bullets
+  bullets.forEach((b, i) => {
+    b.y -= b.speed;
+    if(b.y < -b.height) bullets.splice(i, 1);
+  });
+
+  // Update enemies
+  enemies.forEach((e, i) => {
+    e.y += e.speed;
+    // Collision with bullets
+    bullets.forEach((b, j) => {
+      if(b.x < e.x + e.width && b.x + b.width > e.x &&
+         b.y < e.y + e.height && b.y + b.height > e.y){
+        bullets.splice(j,1);
+        enemies.splice(i,1);
+      }
+    });
+    // Enemy reaches bottom
+    if(e.y > canvas.height) enemies.splice(i,1);
+  });
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // Draw player
+  ctx.fillStyle = "lime";
+  ctx.fillRect(player.x, player.y, player.width, player.height);
+
+  // Draw bullets
+  ctx.fillStyle = "yellow";
+  bullets.forEach(b => ctx.fillRect(b.x, b.y, b.width, b.height));
+
+  // Draw enemies
+  ctx.fillStyle = "red";
+  enemies.forEach(e => ctx.fillRect(e.x, e.y, e.width, e.height));
+}
+
+function loop(){
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+// Spawn enemies every 1.5 seconds
+setInterval(spawnEnemy, 1500);
+
+loop();
