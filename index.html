@@ -2,89 +2,203 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mini Shooting Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitUp Dashboard</title>
+
 <style>
-  body { margin: 0; overflow: hidden; background: #222; color: #fff; font-family: Arial; }
-  canvas { display: block; margin: 0 auto; background: #333; border: 2px solid #fff; }
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#f4f6f9;
+}
+
+/* ===== NAVBAR ===== */
+.navbar{
+  background:#1f3c88;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:15px 25px;
+}
+
+.logo{
+  font-size:22px;
+  font-weight:bold;
+}
+
+.nav-links a{
+  color:white;
+  text-decoration:none;
+  margin:0 15px;
+}
+
+.search-box{
+  padding:7px 10px;
+  border-radius:5px;
+  border:none;
+  outline:none;
+}
+
+/* ===== HEADER SECTION ===== */
+.header{
+  padding:30px;
+}
+
+.header h1{
+  margin:0;
+  font-size:30px;
+}
+
+.btn-group{
+  margin-top:20px;
+}
+
+.btn{
+  padding:12px 20px;
+  border:none;
+  border-radius:6px;
+  margin-right:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.orange{ background:#ff7b00; color:white; }
+.blue{ background:#0066ff; color:white; }
+
+/* ===== STATS ===== */
+.stats{
+  display:flex;
+  gap:20px;
+  padding:20px 30px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  flex:1;
+  border-radius:10px;
+  box-shadow:0 3px 8px rgba(0,0,0,0.1);
+  text-align:center;
+}
+
+.card h2{
+  margin:0;
+  font-size:26px;
+}
+
+.card p{
+  margin:5px 0 0;
+  color:gray;
+}
+
+/* ===== PROJECT LIST ===== */
+.projects{
+  padding:20px 30px;
+}
+
+.project-item{
+  background:white;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.status{
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
+  color:white;
+}
+
+.active{ background:green; }
+.pending{ background:orange; }
 </style>
+
 </head>
 <body>
-<canvas id="gameCanvas" width="800" height="600"></canvas>
 
-<script src="game.js"></script>
-</body>
-</html>const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">⬆ GitUp</div>
 
-let player = { x: 400, y: 500, width: 40, height: 40, speed: 5 };
-let bullets = [];
-let enemies = [];
+  <div class="nav-links">
+    <a href="#">Dashboard</a>
+    <a href="#">Projects</a>
+    <a href="#">Issues</a>
+    <a href="#">Reports</a>
+  </div>
 
-function spawnEnemy() {
-  let x = Math.random() * (canvas.width - 40);
-  enemies.push({ x: x, y: -40, width: 40, height: 40, speed: 2 });
-}
+  <input type="text" class="search-box" placeholder="Search...">
+</div>
 
-document.addEventListener('keydown', function(e){
-  if(e.key === "ArrowLeft") player.x -= player.speed;
-  if(e.key === "ArrowRight") player.x += player.speed;
-  if(e.key === " ") shoot();
+<!-- HEADER -->
+<div class="header">
+  <h1>Welcome, Parvez 👋</h1>
+  <p>Manage your repositories easily</p>
+
+  <div class="btn-group">
+    <button class="btn orange">+ New Project</button>
+    <button class="btn blue">⬇ Clone Repository</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="card">
+    <h2>12</h2>
+    <p>Total Commits</p>
+  </div>
+
+  <div class="card">
+    <h2>4</h2>
+    <p>Repositories</p>
+  </div>
+
+  <div class="card">
+    <h2>3</h2>
+    <p>Issues</p>
+  </div>
+
+  <div class="card">
+    <h2>5</h2>
+    <p>Notifications</p>
+  </div>
+</div>
+
+<!-- PROJECT LIST -->
+<div class="projects">
+
+  <div class="project-item">
+    <div>
+      <strong>E-Commerce App</strong>
+      <p>Updated 2 days ago</p>
+    </div>
+    <span class="status active">Active</span>
+  </div>
+
+  <div class="project-item">
+    <div>
+      <strong>Gaming Dashboard</strong>
+      <p>Updated 1 week ago</p>
+    </div>
+    <span class="status pending">Pending</span>
+  </div>
+
+</div>
+
+<script>
+// Simple Search Alert
+document.querySelector(".search-box").addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
+    alert("You searched: " + this.value);
+  }
 });
+</script>
 
-function shoot(){
-  bullets.push({ x: player.x + player.width/2 - 5, y: player.y, width: 10, height: 20, speed: 7 });
-}
-
-function update(){
-  // Player boundaries
-  if(player.x < 0) player.x = 0;
-  if(player.x + player.width > canvas.width) player.x = canvas.width - player.width;
-
-  // Update bullets
-  bullets.forEach((b, i) => {
-    b.y -= b.speed;
-    if(b.y < -b.height) bullets.splice(i, 1);
-  });
-
-  // Update enemies
-  enemies.forEach((e, i) => {
-    e.y += e.speed;
-    // Collision with bullets
-    bullets.forEach((b, j) => {
-      if(b.x < e.x + e.width && b.x + b.width > e.x &&
-         b.y < e.y + e.height && b.y + b.height > e.y){
-        bullets.splice(j,1);
-        enemies.splice(i,1);
-      }
-    });
-    // Enemy reaches bottom
-    if(e.y > canvas.height) enemies.splice(i,1);
-  });
-}
-
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // Draw player
-  ctx.fillStyle = "lime";
-  ctx.fillRect(player.x, player.y, player.width, player.height);
-
-  // Draw bullets
-  ctx.fillStyle = "yellow";
-  bullets.forEach(b => ctx.fillRect(b.x, b.y, b.width, b.height));
-
-  // Draw enemies
-  ctx.fillStyle = "red";
-  enemies.forEach(e => ctx.fillRect(e.x, e.y, e.width, e.height));
-}
-
-function loop(){
-  update();
-  draw();
-  requestAnimationFrame(loop);
-}
-
-// Spawn enemies every 1.5 seconds
-setInterval(spawnEnemy, 1500);
-
-loop();
+</body>
+</html>
